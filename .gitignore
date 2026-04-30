@@ -6,6 +6,6 @@ dist/
 __pycache__/
 *.pyc
 *.egg-info/
-
+.venv/
 # your cache file (if you added one)
 .image-converter-cache.json

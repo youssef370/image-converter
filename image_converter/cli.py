@@ -19,7 +19,9 @@ def main():
 
     quality = args.quality if args.quality else DEFAULT_QUALITIES[output_format]
     output_dir = Path(args.output) if args.output else None
+    recursive = args.recursive
 
+    
     if not validate_paths(paths):
         sys.exit()
 
@@ -30,6 +32,7 @@ def main():
                 output_format=output_format,
                 quality=quality,
                 output_dir=output_dir,
+                recursive=recursive
             )
         elif path.is_file():
             status = convert_file(
