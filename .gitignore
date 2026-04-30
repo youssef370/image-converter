@@ -1,5 +1,11 @@
-.venv/
-*.pyc
+# Node / Vite
+node_modules/
 dist/
-build/
+
+# Python
+__pycache__/
+*.pyc
 *.egg-info/
+
+# your cache file (if you added one)
+.image-converter-cache.json
