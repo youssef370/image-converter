@@ -5,7 +5,9 @@ from .globals import SUPPORTED_FORMATS, ENCODERS
 from .validators import validate_file
 
 
-def convert_file(*, file_path: Path, output_format: str, quality: int, output_dir: Path | None):
+def convert_file(
+    *, file_path: Path, output_format: str, quality: int, output_dir: Path | None
+):
     """Create the output directory and execute the encoding function based user's format input
     Args:
         file_path: Path of the file to convert
@@ -20,7 +22,7 @@ def convert_file(*, file_path: Path, output_format: str, quality: int, output_di
 
     if not output_dir:
         output_dir = file_path.parent / "converted"
-    
+
     output_dir.mkdir(parents=True, exist_ok=True)
 
     ext = output_format
@@ -33,7 +35,9 @@ def convert_file(*, file_path: Path, output_format: str, quality: int, output_di
         return {"status": "failed", "file": str(file_path)}
 
 
-def convert_folder_content(*, folder_path: Path, quality: int, output_format: str, output_dir: Path):
+def convert_folder_content(
+    *, folder_path: Path, quality: int, output_format: str, output_dir: Path
+):
     """Converts image files within a folder.
     Args:
         folder_path: Path of the folder the content of which should be converted.
@@ -42,8 +46,9 @@ def convert_folder_content(*, folder_path: Path, quality: int, output_format: st
     for file in folder_path.iterdir():
         if file.is_file():
             status = convert_file(
-                file_path=file, output_format=output_format, quality=quality, output_dir=output_dir
+                file_path=file,
+                output_format=output_format,
+                quality=quality,
+                output_dir=output_dir,
             )
             print(f"STATUS: {status['status']}, FILE: {status['file']}")
-
-
