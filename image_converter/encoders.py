@@ -1,3 +1,5 @@
+from .utils import build_output_path
+
 from pathlib import Path
 from PIL import Image
 
@@ -10,8 +12,7 @@ def encode_avif(img: Image, quality: int, output_dir: Path):
     Returns:
         str: path of the output file
     """
-    name = Path(img.filename).stem if img.filename else "output"
-    output = output_dir / f"{name}.avif"
+    output = build_output_path(path=output_dir, name=img.filename, output_format="avif")
     img.save(output, format="AVIF", quality=max(30, int(quality * 0.7)))
 
     return output
@@ -26,8 +27,7 @@ def encode_webp(img: Image, quality: int, output_dir: Path):
     Returns:
         str: path of the output file
     """
-    name = Path(img.filename).stem if img.filename else "output"
-    output = output_dir / f"{name}.webp"
+    output = build_output_path(path=output_dir, name=img.filename, output_format="webp")
     img.convert("RGB").save(output, format="WEBP", quality=quality, method=6)
 
     return output
@@ -42,8 +42,7 @@ def encode_jpeg(img: Image, quality: int, output_dir: Path):
     Returns:
         str: path of the output file
     """
-    name = Path(img.filename).stem if img.filename else "output"
-    output = output_dir / f"{name}.jpeg"
+    output = build_output_path(path=output_dir, name=img.filename, output_format="jpeg")
     img.convert("RGB").save(
         output,
         format="JPEG",
@@ -65,11 +64,7 @@ def encode_png(img: Image, quality: int, output_dir: Path):
         str: path of the output file
     """
     compression = round((quality / 100) * 9)
-    name = Path(img.filename).stem if img.filename else "output"
-    output = output_dir / f"{name}.png"
-
+    output = build_output_path(path=output_dir, name=img.filename, output_format="jpeg")
     img.convert("RGBA").save(output, format="PNG", compress_level=compression)
 
     return output
-
-

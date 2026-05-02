@@ -28,3 +28,5 @@ SUPPORTED_FORMATS = set(FORMATS.keys())
 ENCODERS = {k: v["encoder"] for k, v in FORMATS.items()}
 
 DEFAULT_QUALITIES = {k: v["quality"] for k, v in FORMATS.items()}
+
+CACHE_NAME = ".image-converter-cache.json"

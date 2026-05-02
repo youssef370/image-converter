@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from os import wait
 import sys
 from pathlib import Path
 

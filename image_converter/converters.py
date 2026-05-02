@@ -1,13 +1,11 @@
 from PIL import Image
 from pathlib import Path
 
-from .globals import SUPPORTED_FORMATS, ENCODERS
+from .globals import SUPPORTED_FORMATS, ENCODERS, CACHE_NAME
 from .validators import validate_file
-from .cache import add_to_cache, compute_hash_key
-from .utils import get_file_extension
+from .cache import Cache, CacheEntry, compute_hash_key
 
-import json
-
+cache = Cache(CACHE_NAME)
 
 def convert_file(
     *, file_path: Path, output_format: str, quality: int, output_dir: Path | None
@@ -23,31 +21,24 @@ def convert_file(
     """
     if not validate_file(file_path, SUPPORTED_FORMATS):
         return {"status": "invalid", "file": str(file_path), "reason": "File invalid"}
-
-    if not output_dir:
-        output_dir = file_path.parent / "converted"
-# ------- TODO: put this part in a separate function in cache.py
-    #
-    # if not Path(".image-converter-cache.json").exists():
-    #     with open(".image-converter-cache.json", "w") as f:
-    #         f.write("{}")
-    #
-    # with open(".image-converter-cache.json", "r") as f:
-    #     cache_file = json.load(f)
-    #
-    # hashkey = compute_hash_key(
-    #     file_path=file_path, quality=quality, output_format=output_format
-    # )
-# ---------------------------------
-    # if hashkey in cache_file.keys():
-    #     return {"status": "cached", "file": str(file_path)}
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-
+    
+    key = compute_hash_key(file_path=file_path, quality=quality, output_format=output_format)
+    
+    if cache.lookup(key):
+        return {"status": "skipped", "file": str(file_path), "reason": "Already in cache"}
+    
     try:
         with Image.open(file_path) as img:
             output = ENCODERS[output_format](img, quality, output_dir)
+            print("ALL CLEAR")
+            cache_item = CacheEntry(
+                    input_file=file_path,
+                    output_format=output_format,
+                    output_file=output,
+                    quality=quality
+                    )
+            print(cache_item)
+            cache.add(cache_item)
             return {"status": "ok", "file": output, "reason": "SUCCESS"}
     except Exception as e:
         return {"status": "failed", "file": str(file_path), "reason": e}
@@ -72,6 +63,10 @@ def convert_folder_content(
             continue
 
         relative_path = file.relative_to(folder_path)
+        
+        if not output_dir:
+            output_dir = Path("./converted")
+
         target_dir = output_dir / relative_path.parent
         target_dir.mkdir(parents=True, exist_ok=True)
 
